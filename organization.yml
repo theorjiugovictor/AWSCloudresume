@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: '2010-09-09-OC'
+Description: default template generated for organization with master account 113835293925
+
+Organization:
+  ManagementAccount:
+    Type: OC::ORG::MasterAccount
+    Properties:
+      AccountName: Orjiugo Prince Victor
+      AccountId: '113835293925'
+      RootEmail: orjiugo.victor@gmail.com
+      Alias: theorjiugovictor
+
+  OrganizationRoot:
+    Type: OC::ORG::OrganizationRoot
+    Properties:
+      DefaultOrganizationAccessRoleName: OrganizationAccountAccessRole
+
+
