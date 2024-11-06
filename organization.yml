@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: '2010-09-09-OC'
+Description: default template generated for organization with master account 113835293925
+
+Organization:
+  ManagementAccount:
+    Type: OC::ORG::MasterAccount
+    Properties:
+      AccountName: Orjiugo Prince Victor
+      AccountId: '113835293925'
+      RootEmail: orjiugo.victor@gmail.com
+      Alias: theorjiugovictor
+
+  OrganizationRoot:
+    Type: OC::ORG::OrganizationRoot
+    Properties:
+      DefaultOrganizationAccessRoleName: OrganizationAccountAccessRole
+
+Resources:
+  ProdAccount:
+    Type: OC::ORG::Account
+    Properties:
+      AccountName: ProdAccount
+      AccountEmail: orjiugo.victor+production@gmail.com
+      AccountAlias: production-room
+    OrganizationBinding:
+      Region: 'us-east-1'
+
+  DevAccount:
+    Type: OC::ORG::Account
+    Properties:
+      AccountName: DevAccount
+      AccountEmail: orjiugo.victor+development@gmail.com
+      AccountAlias: dev-room
+    OrganizationBinding:
+      Region: 'us-east-1'
+
+  TestingAccount:
+    Type: OC::ORG::Account
+    Properties:
+      AccountName: TestingAccount
+      AccountEmail: orjiugo.victor+testing@gmail.com
+      AccountAlias: testing-room
+    OrganizationBinding:
+      Region: 'us-east-1'
+
+  ProductionOrganizationalUnits:
+    Type: OC::ORG::OrganizationalUnit
+    Properties:
+      OrganizationalUnitName: Production
+      Accounts: 
+        - !Ref ProdAccount
+    OrganizationBinding:
+      Region: 'us-east-1'
+
+  DevelopmentOrganizationalUnit:
+    Type: OC::ORG::OrganizationalUnit
+    Properties:
+      OrganizationalUnitName: Development
+      Accounts:
+        - !Ref DevAccount
+    OrganizationBinding:
+      Region: 'us-east-1'
+
+  SandboxOrganizationalUnit:
+    Type: OC::ORG::OrganizationalUnit
+    Properties:
+      OrganizationalUnitName: Sandbox
+      Accounts:
+        - !Ref TestingAccount
+    OrganizationBinding:
+      Region: 'us-east-1'
