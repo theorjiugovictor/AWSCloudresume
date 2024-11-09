@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Configuration
-BUCKET_NAME="aws-cloud-labrat"
-WEBSITE_FOLDER="./resume"  # Your new local folder
+BUCKET_NAME="theorjiugovictor.com"
+WEBSITE_FOLDER="./frontend"  # Your new local folder
 
 # Sync files to S3
 aws s3 sync $WEBSITE_FOLDER s3://$BUCKET_NAME/ \

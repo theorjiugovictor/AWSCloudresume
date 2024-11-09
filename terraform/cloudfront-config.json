@@ -5,7 +5,7 @@
         "Quantity": 1,
         "Items": [
             {
-                "DomainName": "aws-cloud-labrat.s3-website-us-east-1.amazonaws.com",
+                "DomainName": "http://theorjiugovictor.com.s3-website-us-east-1.amazonaws.com",
                 "Id": "S3Origin",
                 "CustomOriginConfig": {
                     "HTTPPort": 80,
