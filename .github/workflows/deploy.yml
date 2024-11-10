@@ -68,15 +68,17 @@ jobs:
 
       - name: Create Lambda deployment package
         run: |
-          zip -j function.zip lambda_function.py
+          zip -j lambda_function.zip lambda_function.py
 
       - name: Update Lambda Function
         run: |
           aws lambda update-function-code \
             --function-name visitor-counter-function \
-            --zip-file fileb://function.zip
+            --zip-file fileb://lambda_function.zip
 
       - name: Run tests
+        env:
+          PYTHONPATH: '${{ github.workspace }}/backend'
         run: |
           pytest tests/
 
@@ -115,4 +117,3 @@ jobs:
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
             --paths "/*"
-
