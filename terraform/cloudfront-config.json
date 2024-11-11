@@ -1,45 +1,45 @@
 {
-    "Comment": "Distribution for S3 website",
-    "CallerReference": "labrat110220",
-    "Origins": {
-        "Quantity": 1,
-        "Items": [
-            {
-                "DomainName": "http://theorjiugovictor.com.s3-website-us-east-1.amazonaws.com",
-                "Id": "S3Origin",
-                "CustomOriginConfig": {
-                    "HTTPPort": 80,
-                    "HTTPSPort": 443,
-                    "OriginProtocolPolicy": "http-only"
-                }
-            }
-        ]
-    },
-    "DefaultCacheBehavior": {
-        "TargetOriginId": "S3Origin",
-        "ViewerProtocolPolicy": "redirect-to-https",
-        "AllowedMethods": {
-            "Quantity": 2,
-            "Items": ["GET", "HEAD"]
-        },
-        "DefaultTTL": 86400,
-        "MinTTL": 0,
-        "MaxTTL": 31536000,
-        "ForwardedValues": {
-            "QueryString": false,
-            "Cookies": {
-                "Forward": "none"
-            }
-        }
-    },
-    "Enabled": true,
-    "Aliases": {
-        "Quantity": 1,
-        "Items": ["theorjiugovictor.com"]
-    },
-    "ViewerCertificate": {
-        "ACMCertificateArn": "arn:aws:acm:us-east-1:463470976327:certificate/e2934a64-9a59-4726-8390-6465383de9ff",
-        "SSLSupportMethod": "sni-only",
-        "MinimumProtocolVersion": "TLSv1.2_2019"
-    }
+	"Comment": "Distribution for S3 website",
+	"CallerReference": "labrat110220",
+	"Origins": {
+		"Quantity": 1,
+		"Items": [
+			{
+				"DomainName": "http://theorjiugovictor.com.s3-website-us-east-1.amazonaws.com",
+				"Id": "S3Origin",
+				"CustomOriginConfig": {
+					"HTTPPort": 80,
+					"HTTPSPort": 443,
+					"OriginProtocolPolicy": "http-only"
+				}
+			}
+		]
+	},
+	"DefaultCacheBehavior": {
+		"TargetOriginId": "S3Origin",
+		"ViewerProtocolPolicy": "redirect-to-https",
+		"AllowedMethods": {
+			"Quantity": 2,
+			"Items": ["GET", "HEAD"]
+		},
+		"DefaultTTL": 86400,
+		"MinTTL": 0,
+		"MaxTTL": 31536000,
+		"ForwardedValues": {
+			"QueryString": false,
+			"Cookies": {
+				"Forward": "none"
+			}
+		}
+	},
+	"Enabled": true,
+	"Aliases": {
+		"Quantity": 1,
+		"Items": ["theorjiugovictor.com"]
+	},
+	"ViewerCertificate": {
+		"ACMCertificateArn": "arn:aws:acm:us-east-1:463470976327:certificate/e2934a64-9a59-4726-8390-6465383de9ff",
+		"SSLSupportMethod": "sni-only",
+		"MinimumProtocolVersion": "TLSv1.2_2019"
+	}
 }
