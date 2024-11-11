@@ -99,18 +99,32 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Update API Gateway URL in JavaScript
+      - name: Get API Gateway URL
         run: |
-          API_URL=$(aws apigateway get-stage \
-            --rest-api-id $(aws apigateway get-rest-apis | grep "name.*visitor-counter-api" -m 1 | awk -F '"' '{print $4}') \
-            --stage-name dev \
-            --query 'invokeUrl' \
-            --output text)
-          sed -i "s|<YOUR_API_GATEWAY_INVOKE_URL>|$API_URL|g" visitor-counter.js
+          # Get API Gateway details and store URL in an environment variable
+          API_ID=$(aws apigateway get-rest-apis --query 'items[?name==`visitor-counter-api`].id' --output text)
+          if [ -z "$API_ID" ]; then
+            echo "Error: Could not find API Gateway ID"
+            exit 1
+          fi
+          
+          API_URL="https://${API_ID}.execute-api.us-east-1.amazonaws.com/dev/count"
+          echo "API_URL=$API_URL" >> $GITHUB_ENV
+          echo "Found API Gateway URL: $API_URL"
+
+      - name: Update JavaScript file
+        run: |
+          if [ ! -f "visitor-counter.js" ]; then
+            echo "Error: visitor-counter.js not found"
+            exit 1
+          fi
+          
+          sed -i "s|const API_URL = '[^']*'|const API_URL = '${API_URL}'|" visitor-counter.js
+          echo "Updated visitor-counter.js with API URL: $API_URL"
 
       - name: Deploy to S3
         run: |
-          aws s3 sync . s3://${{ secrets.S3_BUCKET }} --delete
+          aws s3 sync . s3://theorjiugovictor.com --delete
 
       - name: Invalidate CloudFront Cache
         run: |

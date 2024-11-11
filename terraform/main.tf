@@ -215,6 +215,69 @@ resource "aws_api_gateway_method" "get" {
   http_method   = "GET"
   authorization = "NONE"
 }
+# Add these to your existing Terraform configuration
+
+# Enable CORS for GET method
+resource "aws_api_gateway_method_response" "get" {
+  rest_api_id = aws_api_gateway_rest_api.visitor_counter.id
+  resource_id = aws_api_gateway_resource.count.id
+  http_method = aws_api_gateway_method.get.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "get" {
+  rest_api_id = aws_api_gateway_rest_api.visitor_counter.id
+  resource_id = aws_api_gateway_resource.count.id
+  http_method = aws_api_gateway_method.get.http_method
+  status_code = aws_api_gateway_method_response.get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.get
+  ]
+}
+
+# Enable CORS for POST method
+resource "aws_api_gateway_method_response" "post" {
+  rest_api_id = aws_api_gateway_rest_api.visitor_counter.id
+  resource_id = aws_api_gateway_resource.count.id
+  http_method = aws_api_gateway_method.post.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "post" {
+  rest_api_id = aws_api_gateway_rest_api.visitor_counter.id
+  resource_id = aws_api_gateway_resource.count.id
+  http_method = aws_api_gateway_method.post.http_method
+  status_code = aws_api_gateway_method_response.post.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.lambda
+  ]
+}
 
 resource "aws_api_gateway_integration" "get" {
   rest_api_id             = aws_api_gateway_rest_api.visitor_counter.id
