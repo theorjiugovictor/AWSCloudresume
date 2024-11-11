@@ -1,28 +1,45 @@
 // visitor-counter.js
 
-// This will be replaced by the GitHub Action with the actual API URL
-const API_URL = '<YOUR_API_GATEWAY_INVOKE_URL>';
+// This will be replaced by the actual API Gateway URL from your Terraform output
+const API_URL = '<YOUR_API_GATEWAY_INVOKE_URL>/count';
 
 async function fetchVisitorCount() {
 	try {
-		const response = await fetch(API_URL, {
-			method: 'POST',
+		// First try to GET the current count
+		const getResponse = await fetch(API_URL, {
+			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 		});
 
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
+		if (!getResponse.ok) {
+			throw new Error(`HTTP error! status: ${getResponse.status}`);
 		}
 
-		const data = await response.json();
-		const visitorCount = typeof data === 'number' ? data : data.count;
+		const getData = await getResponse.json();
 
-		// Update just the count number, since your HTML already has the surrounding text
+		// Then increment the count with a POST request
+		const postResponse = await fetch(API_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ action: 'increment' }),
+		});
+
+		if (!postResponse.ok) {
+			throw new Error(`HTTP error! status: ${postResponse.status}`);
+		}
+
+		const postData = await postResponse.json();
+
+		// Use the updated count from the POST response
+		const visitorCount = postData.count || postData;
+
 		const countElement = document.getElementById('visitor-count');
 		if (countElement) {
-			countElement.textContent = visitorCount;
+			countElement.textContent = visitorCount.toLocaleString(); // Format large numbers
 		} else {
 			console.error('Visitor count element not found');
 		}
@@ -30,7 +47,7 @@ async function fetchVisitorCount() {
 		console.error('Error fetching visitor count:', error);
 		const countElement = document.getElementById('visitor-count');
 		if (countElement) {
-			countElement.textContent = 'Error loading visitor count';
+			countElement.textContent = 'Error loading count';
 		}
 	}
 }
@@ -46,7 +63,7 @@ async function initVisitorCounter(maxRetries = 3) {
 			break;
 		} catch (error) {
 			retryCount++;
-			console.error(`Attempt ${retryCount} failed:`, error);
+			console.log(`Attempt ${retryCount} failed:`, error);
 
 			if (retryCount === maxRetries) {
 				console.error('Max retries reached');
