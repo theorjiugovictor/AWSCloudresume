@@ -1,7 +1,8 @@
 // visitor-counter.js
 
 // This will be replaced by the actual API Gateway URL from your Terraform output
-const API_URL = '<YOUR_API_GATEWAY_INVOKE_URL>/count';
+const API_URL =
+	'https://3i7vlq6kk0.execute-api.us-east-1.amazonaws.com/dev/count';
 
 async function fetchVisitorCount() {
 	try {
