@@ -16,6 +16,14 @@ terraform {
 provider "aws" {
   region = "us-east-1"
 }
+# Retrieve AWS account ID
+data "aws_caller_identity" "current" {}
+
+variable "aws_region" {
+  type    = string
+  default = "us-east-1"  # or any region you’re using
+}
+
 
 # Use data source for existing certificate
 data "aws_acm_certificate" "existing" {
@@ -154,8 +162,14 @@ resource "aws_lambda_function" "visitor_counter" {
   filename      = "../backend/lambda_function.zip"
   function_name = "visitor-counter-function"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.lambda_handler"
+  handler       = "lambda_function.lambda_handler"
   runtime       = "python3.9"
+
+    environment {
+    variables = {
+      DYNAMODB_TABLE = "visitor-counter"              # Ensure the name matches your table
+    }
+  }
 }
 
 # API Gateway
@@ -358,6 +372,29 @@ resource "aws_api_gateway_stage" "dev" {
 resource "aws_iam_role" "lambda_role" {
   name               = "visitor_counter_lambda_role"
   assume_role_policy = file("${path.module}/../backend/lambda-trust-policy.json")
+}
+
+resource "aws_iam_policy" "dynamodb_access_policy" {
+  name        = "visitor_counter_dynamodb_policy"
+  
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem"
+        ]
+        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/visitor-counter"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_dynamodb_policy" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.dynamodb_access_policy.arn
 }
 
 # Outputs
